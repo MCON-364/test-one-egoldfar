@@ -25,7 +25,14 @@ public class StudyTracker {
      * Throw IllegalArgumentException if name is null or blank.
      */
     public boolean addLearner(String name) {
-        throw new UnsupportedOperationException();
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("name is null or blank");
+        }
+        if (scoresByLearner.containsKey(name)) {
+            return false;
+        }
+        scoresByLearner.put(name, new ArrayList<>());
+        return true;
     }
 
     /**
@@ -42,7 +49,19 @@ public class StudyTracker {
      * This operation should be undoable.
      */
     public boolean addScore(String name, int score) {
-        throw new UnsupportedOperationException();
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("name is null or blank");
+        }
+        if (!scoresByLearner.containsKey(name)) {
+            return false;
+        }
+        if (score < 0 || score > 100) {
+            throw new IllegalArgumentException("score is out of range");
+        }
+        var scores = scoresByLearner.get(name);
+        scores.add(score);
+        undoStack.push(() -> scoresByLearner.get(name).remove((Integer) score));
+        return true;
     }
 
     /**
@@ -54,7 +73,17 @@ public class StudyTracker {
      * - the learner has no scores
      */
     public Optional<Double> averageFor(String name) {
-        throw new UnsupportedOperationException();
+
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("name is null or blank");
+        }
+        if (!scoresByLearner.containsKey(name) || scoresByLearner.get(name).isEmpty()) {
+            return Optional.empty();
+        }
+        var average = scoresByLearner.get(name).stream()
+                .mapToDouble(Double::valueOf)
+                .average();
+        return Optional.of(average.getAsDouble());
     }
 
     /**
@@ -70,7 +99,19 @@ public class StudyTracker {
      * Return Optional.empty() when no average exists.
      */
     public Optional<String> letterBandFor(String name) {
-        throw new UnsupportedOperationException();
+
+        var average = averageFor(name);
+        if (average.isPresent()) {
+            return switch ((int) average.get().doubleValue()/10) {
+                case 9,10 -> Optional.of("A");
+                case 8 -> Optional.of("B");
+                case 7 -> Optional.of("C");
+                case 6 -> Optional.of("D");
+                default -> Optional.of("F");
+            };
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -81,7 +122,11 @@ public class StudyTracker {
      * Return false if there is nothing to undo.
      */
     public boolean undoLastChange() {
-        throw new UnsupportedOperationException();
+        if (undoStack.isEmpty()) {
+            return false;
+        }
+        undoStack.pop().undo();
+        return true;
     }
 
 

@@ -13,7 +13,7 @@ public class FunctionalWarmup {
      * Return a Supplier that gives the current month number (1-12).
      */
     public static Supplier<Integer> currentMonthSupplier() {
-        throw new UnsupportedOperationException();
+        return () -> LocalDate.now().getMonthValue();
     }
 
     /**
@@ -22,7 +22,7 @@ public class FunctionalWarmup {
      * has more than 5 characters.
      */
     public static Predicate<String> longerThanFive() {
-        throw new UnsupportedOperationException();
+        return s -> !(s == null) && s.length() > 5;
     }
 
     /**
@@ -30,17 +30,20 @@ public class FunctionalWarmup {
      * Return a Predicate that checks whether a number is both:
      * - positive
      * - even
-     *
+     * <p>
      * Prefer chaining smaller predicates.
      */
     public static Predicate<Integer> positiveAndEven() {
-        throw new UnsupportedOperationException();
+
+        Predicate<Integer> isEven = i -> i % 2 == 0;
+        Predicate<Integer> isPositive = i -> i > 0;
+        return isEven.and(isPositive);
     }
 
     /**
      * Problem 4
      * Return a Function that counts words in a string.
-     *
+     * <p>
      * Notes:
      * - Trim first.
      * - Blank strings should return 0.
@@ -48,7 +51,14 @@ public class FunctionalWarmup {
      *
      */
     public static Function<String, Integer> wordCounter() {
-        throw new UnsupportedOperationException();
+        return s -> {
+            s = s.trim();
+            if (s.isBlank()) {
+                return 0;
+            }
+            var words = s.split("\\s+");
+            return words.length;
+        };
     }
 
     /**
@@ -58,11 +68,16 @@ public class FunctionalWarmup {
      * - trim whitespace
      * - convert to uppercase
      * - return the final list in the same relative order
-     *
+     * <p>
      * Example:
      * ["  math ", "", " java", "  "] -> ["MATH", "JAVA"]
      */
     public static List<String> cleanLabels(List<String> labels) {
-        throw new UnsupportedOperationException();
+        return
+                labels.stream()
+                        .filter(s -> !s.isBlank())
+                        .map(String::trim)
+                        .map(String::toUpperCase)
+                        .toList();
     }
 }
