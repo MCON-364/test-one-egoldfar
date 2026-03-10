@@ -19,7 +19,10 @@ public class BasicStreamsQuiz {
      * Return all course names sorted alphabetically.
      */
     public List<String> getSortedCourseNames() {
-        throw new UnsupportedOperationException();
+
+        return scoresByCourse.keySet().stream()
+                .sorted(String::compareToIgnoreCase)
+                .toList();
     }
 
     /**
@@ -27,7 +30,11 @@ public class BasicStreamsQuiz {
      * Across all courses, count how many scores are greater than or equal to threshold.
      */
     public long countScoresAtLeast(int threshold) {
-        throw new UnsupportedOperationException();
+
+        return scoresByCourse.values().stream()
+                .flatMap(Collection::stream)
+                .filter(g -> g >= threshold)
+                .count();
     }
 
     /**
@@ -36,7 +43,9 @@ public class BasicStreamsQuiz {
      * If none exists, return Optional.empty().
      */
     public Optional<String> firstLongWord(List<String> words, int minLength) {
-        throw new UnsupportedOperationException();
+        return words.stream()
+                .filter(w -> w.length() >= minLength)
+                .findFirst();
     }
 
     /**
@@ -45,17 +54,25 @@ public class BasicStreamsQuiz {
      * Use streams.
      */
     public List<Integer> squareAll(List<Integer> numbers) {
-        throw new UnsupportedOperationException();
+       return numbers.stream()
+               .map(n -> n*n)
+               .toList();
     }
 
     /**
      * Problem 10
      * Return the average of all passing scores across all courses.
      * A passing score is 70 or above.
-     *
+     * <p>
      * Return 0.0 if there are no passing scores.
      */
     public double averagePassingScore() {
-        throw new UnsupportedOperationException();
+        return scoresByCourse.values().stream()
+                .flatMap(Collection::stream)
+                .filter(g -> g >= 70)
+                .mapToDouble(Integer::intValue)
+                .average().orElse(0.0);
+
+
     }
 }
