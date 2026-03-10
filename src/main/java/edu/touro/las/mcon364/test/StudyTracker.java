@@ -60,7 +60,7 @@ public class StudyTracker {
         }
         var scores = scoresByLearner.get(name);
         scores.add(score);
-        undoStack.push(() -> scoresByLearner.get(name).remove(score));
+        undoStack.push(() -> scoresByLearner.get(name).remove((Integer) score));
         return true;
     }
 
