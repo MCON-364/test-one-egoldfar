@@ -44,7 +44,7 @@ public class BasicStreamsQuiz {
      */
     public Optional<String> firstLongWord(List<String> words, int minLength) {
         return words.stream()
-                .filter(w -> w.length() >= minLength)
+                .filter(w -> w.length() > minLength)
                 .findFirst();
     }
 
